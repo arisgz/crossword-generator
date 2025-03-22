@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -41,7 +42,9 @@ public class Main {
             }
         }
 
-        crossword.show();
+        crossword.showSolution();
+        crossword.createSolutionImage();
+        crossword.createEmptyImage();
 //        crossword.printStats();
 
         // Print missing words

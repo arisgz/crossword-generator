@@ -1,5 +1,9 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -78,7 +82,7 @@ public class CrossWord {
         crossword[y - 1][x].end = true;
     }
 
-    public void show() {
+    public void showSolution() {
 //        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 //        GraphicsDevice[] gs = ge.getScreenDevices();
 //        JFrame frame = new JFrame(gs[0].getDefaultConfiguration());
@@ -111,6 +115,86 @@ public class CrossWord {
         frame.setVisible(true);
     }
 
+    private void printCrosswordToGraphics(Graphics2D g2d) {
+
+    }
+
+    public void createEmptyImage() {
+        BufferedImage image = new BufferedImage(getColumns() * SQUARE_DIMENSION,
+                getRows() * SQUARE_DIMENSION, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = image.createGraphics();
+
+        for (int i = yStart; i <= yEnd; i++) {
+            for (int j = xStart; j <= xEnd; j++) {
+                int x = (j - xStart) * SQUARE_DIMENSION;
+                int y = (i - yStart) * SQUARE_DIMENSION;
+
+                // Draw the square border (empty or with background)
+                if (crossword[i][j] == null) {
+                    // Empty square, fill it with black
+                    g2d.setColor(Color.BLACK);
+                    g2d.fillRect(x, y, SQUARE_DIMENSION, SQUARE_DIMENSION);
+                } else {
+                    g2d.setColor(Color.WHITE);
+                    g2d.fillRect(x, y, SQUARE_DIMENSION, SQUARE_DIMENSION);
+                }
+
+                g2d.setColor(Color.BLACK);
+                g2d.drawRect(x, y, SQUARE_DIMENSION, SQUARE_DIMENSION);
+            }
+        }
+
+        g2d.dispose();
+        try {
+            ImageIO.write(image, "png", new File("empty.png"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void createSolutionImage() {
+        BufferedImage image = new BufferedImage(getColumns() * SQUARE_DIMENSION,
+                getRows() * SQUARE_DIMENSION, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = image.createGraphics();
+
+        for (int i = yStart; i <= yEnd; i++) {
+            for (int j = xStart; j <= xEnd; j++) {
+                int x = (j - xStart) * SQUARE_DIMENSION;
+                int y = (i - yStart) * SQUARE_DIMENSION;
+
+                // Draw the square border (empty or with background)
+                if (crossword[i][j] == null) {
+                    // Empty square, fill it with black
+                    g2d.setColor(Color.BLACK);
+                    g2d.fillRect(x, y, SQUARE_DIMENSION, SQUARE_DIMENSION);
+                } else {
+                    g2d.setColor(Color.WHITE);
+                    g2d.fillRect(x, y, SQUARE_DIMENSION, SQUARE_DIMENSION);
+                }
+
+                g2d.setColor(Color.BLACK);
+                g2d.drawRect(x, y, SQUARE_DIMENSION, SQUARE_DIMENSION);
+
+                if (crossword[i][j] != null) {
+                    String letter = "" + crossword[i][j].getChar();
+                    FontMetrics fm = g2d.getFontMetrics();
+                    int letterWidth = fm.stringWidth(letter);
+                    int letterHeight = fm.getHeight();
+
+                    int letterX = x + (SQUARE_DIMENSION - letterWidth) / 2;
+                    int letterY = y + (SQUARE_DIMENSION + letterHeight) / 2 - fm.getDescent();
+                    g2d.drawString(letter, letterX, letterY);
+                }
+            }
+        }
+
+        g2d.dispose();
+        try {
+            ImageIO.write(image, "png", new File("solution.png"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public void print() {
         for (int i = 0; i < getColumns() * 2 + 1; i++) {
