@@ -18,16 +18,10 @@ public class Main {
 
         crossword.generate(words);
 
-        long a = System.currentTimeMillis();
         List<CrossWord> res = new ArrayList<>();
         res.add(crossword);
 
         List<String[]> shuffles = shuffling(words, 30000);
-        long b = System.currentTimeMillis();
-        System.out.println((b - a) / 1000.0);
-
-
-        a = System.currentTimeMillis();
 
         for (String[] word : shuffles) {
             crossword = new CrossWord();
@@ -47,11 +41,8 @@ public class Main {
             }
         }
 
-        b = System.currentTimeMillis();
-        System.out.println((b - a) / 1000.0);
-
         crossword.show();
-        crossword.printStats();
+//        crossword.printStats();
 
         // Print missing words
         List<String> w = new ArrayList<>(Arrays.asList(words));
