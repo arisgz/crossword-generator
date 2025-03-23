@@ -54,7 +54,7 @@ public class CrossWord {
         crossword[placement.getY()][placement.getX()].start = true;
 
         UpdateMeasure(placement);
-//        updateMeasureIterative();
+        // updateMeasureIterative();
         words.add(new String(placement.getWord()));
     }
 
@@ -83,10 +83,6 @@ public class CrossWord {
     }
 
     public void showSolution() {
-//        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-//        GraphicsDevice[] gs = ge.getScreenDevices();
-//        JFrame frame = new JFrame(gs[0].getDefaultConfiguration());
-
         JFrame frame = new JFrame();
         frame.setTitle("Crossword");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -115,18 +111,18 @@ public class CrossWord {
         frame.setVisible(true);
     }
 
-    private void printCrosswordToGraphics(Graphics2D g2d) {
-
-    }
-
     public void createEmptyImage() {
-        BufferedImage image = new BufferedImage(getColumns() * SQUARE_DIMENSION,
-                getRows() * SQUARE_DIMENSION, BufferedImage.TYPE_INT_RGB);
+        BufferedImage image = new BufferedImage(getColumns() * SQUARE_DIMENSION + 1,
+                getRows() * SQUARE_DIMENSION + 1, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = image.createGraphics();
+
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0, 0, getColumns() * SQUARE_DIMENSION + 1,
+                getRows() * SQUARE_DIMENSION + 1);
 
         for (int i = yStart; i <= yEnd; i++) {
             for (int j = xStart; j <= xEnd; j++) {
-                printCellToGraphics(g2d, i, j, false);
+                printBorder(g2d, i, j);
             }
         }
 
@@ -139,13 +135,23 @@ public class CrossWord {
     }
 
     public void createSolutionImage() {
-        BufferedImage image = new BufferedImage(getColumns() * SQUARE_DIMENSION,
-                getRows() * SQUARE_DIMENSION, BufferedImage.TYPE_INT_RGB);
+        BufferedImage image = new BufferedImage(getColumns() * SQUARE_DIMENSION + 1,
+                getRows() * SQUARE_DIMENSION + 1, BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = image.createGraphics();
+
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0, 0, getColumns() * SQUARE_DIMENSION + 1,
+                getRows() * SQUARE_DIMENSION + 1);
 
         for (int i = yStart; i <= yEnd; i++) {
             for (int j = xStart; j <= xEnd; j++) {
-                printCellToGraphics(g2d, i, j, true);
+                printCellToGraphics(g2d, i, j);
+            }
+        }
+
+        for (int i = yStart; i <= yEnd; i++) {
+            for (int j = xStart; j <= xEnd; j++) {
+                printBorder(g2d, i, j);
             }
         }
 
@@ -157,24 +163,27 @@ public class CrossWord {
         }
     }
 
-    private void printCellToGraphics(Graphics2D g2d, int i, int j, boolean printText) {
+    private void printBorder(Graphics2D g2d, int i, int j) {
+        if (crossword[i][j] != null) {
+            int x = (j - xStart) * SQUARE_DIMENSION;
+            int y = (i - yStart) * SQUARE_DIMENSION;
+            g2d.setColor(Color.BLACK);
+            g2d.drawRect(x, y, SQUARE_DIMENSION, SQUARE_DIMENSION);
+        }
+    }
+
+    private void printCellToGraphics(Graphics2D g2d, int i, int j) {
         int x = (j - xStart) * SQUARE_DIMENSION;
         int y = (i - yStart) * SQUARE_DIMENSION;
 
         // Draw the square border (empty or with background)
-        if (crossword[i][j] == null) {
-            // Empty square, fill it with black
-            g2d.setColor(Color.BLACK);
-            g2d.fillRect(x, y, SQUARE_DIMENSION, SQUARE_DIMENSION);
-        } else {
+        if (crossword[i][j] != null) {
             g2d.setColor(Color.WHITE);
             g2d.fillRect(x, y, SQUARE_DIMENSION, SQUARE_DIMENSION);
         }
 
-        g2d.setColor(Color.BLACK);
-        g2d.drawRect(x, y, SQUARE_DIMENSION, SQUARE_DIMENSION);
-
-        if (printText && crossword[i][j] != null) {
+        if (crossword[i][j] != null) {
+            g2d.setColor(Color.BLACK);
             String letter = "" + crossword[i][j].getChar();
             FontMetrics fm = g2d.getFontMetrics();
             int letterWidth = fm.stringWidth(letter);
@@ -236,26 +245,6 @@ public class CrossWord {
         }
     }
 
-
-    private void updateMeasureIterative() {
-        xStart = CROSSWORD_DIMENSION + 1;
-        yStart = CROSSWORD_DIMENSION + 1;
-        xEnd = -1;
-        yEnd = -1;
-
-        for (int i = 0; i < CROSSWORD_DIMENSION; i++) {
-            for (int j = 0; j < CROSSWORD_DIMENSION; j++) {
-                if (crossword[i][j] != null) {
-                    if (j < xStart) xStart = j;
-                    if (j > xEnd) xEnd = j;
-                    if (i < yStart) yStart = i;
-                    if (i > yEnd) yEnd = i;
-                }
-            }
-        }
-    }
-
-
     private List<Placement> findPlacement(char[] word, int x, int y) {
         List<Integer> offsets = new ArrayList<>();
         for (int i = 0; i < word.length; i++) {
@@ -308,7 +297,6 @@ public class CrossWord {
         if (crossword[y][xi - 1] != null || crossword[y][xi + word.length] != null) {
             return false;
         }
-
 
         for (int i = 0; i < word.length; i++) {
             if (((crossword[y - 1][xi + i] != null && crossword[y - 1][xi + i].getDirection() != Direction.HORIZONTAL && crossword[y - 1][xi + i].end) ||
