@@ -421,7 +421,8 @@ public class CrossWord {
     }
 
     public void generate(String[] words) {
-//        Arrays.sort(words, (s1, s2) -> s2.length() - s1.length());
+        if (words.length == 0)
+            throw new RuntimeException("No word were given");
         for (int i = 0; i < words.length; i++) {
             words[i] = words[i].toUpperCase();
         }

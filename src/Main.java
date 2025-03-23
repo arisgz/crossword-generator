@@ -1,3 +1,4 @@
+import java.io.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -8,11 +9,16 @@ import java.util.Random;
 public class Main {
 
     private final static int MAX_VARIATIONS = 30000;
+    private final static String CONF_FILE = "words.conf";
 
-    public static void main(String[] args) {
-        String[] words = new String[]{"ZORZI", "RUCOLA", "LIFA", "STO CAZZO", "TFIIH", "BUCCHI",
-                "PIANTO", "FANTASTICA", "PARCHEGGIO A L", "PIOVE", "OFELE", "CAZZI", "SAN SIMONE", "PERRO",
-                "IMMUNOLOGIA", "RADICAL CHIC", "tappi", "king"};
+    public static void main(String[] args) throws IOException {
+        File file = new File(CONF_FILE);
+        if (!file.exists()) {
+            file.createNewFile();
+            System.out.println("Touched " + CONF_FILE + " please fill it with your words");
+            return;
+        }
+        String[] words = wordsFromFile(file);
 
         Arrays.sort(words, (s1, s2) -> s2.length() - s1.length());
 
@@ -43,10 +49,9 @@ public class Main {
             }
         }
 
-        crossword.showSolution();
+//        crossword.showSolution();
         crossword.createSolutionImage();
         crossword.createEmptyImage();
-//        crossword.printStats();
 
         // Print missing words
         List<String> w = new ArrayList<>(Arrays.asList(words));
@@ -61,6 +66,20 @@ public class Main {
             System.out.println(s);
         }
 
+    }
+
+    private static String[] wordsFromFile(File file) throws IOException {
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        String line;
+        List<String> w = new ArrayList<>();
+        while ((line = br.readLine()) != null) {
+            if (!line.isEmpty()) {
+                w.add(line.trim().toUpperCase());
+            }
+        }
+        String[] words = new String[w.size()];
+        w.toArray(words);
+        return words;
     }
 
     private static int factorial(int n) {
