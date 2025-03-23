@@ -6,13 +6,15 @@ import java.util.List;
 import java.util.Random;
 
 public class Main {
+
+    private final static int MAX_VARIATIONS = 30000;
+
     public static void main(String[] args) {
         String[] words = new String[]{"ZORZI", "RUCOLA", "LIFA", "STO CAZZO", "TFIIH", "BUCCHI",
                 "PIANTO", "FANTASTICA", "PARCHEGGIO A L", "PIOVE", "OFELE", "CAZZI", "SAN SIMONE", "PERRO",
                 "IMMUNOLOGIA", "RADICAL CHIC", "tappi", "king"};
 
         Arrays.sort(words, (s1, s2) -> s2.length() - s1.length());
-
 
         CrossWord crossword = new CrossWord();
 
@@ -21,7 +23,7 @@ public class Main {
         List<CrossWord> res = new ArrayList<>();
         res.add(crossword);
 
-        List<String[]> shuffles = shuffling(words, 30000);
+        List<String[]> shuffles = shuffling(words, MAX_VARIATIONS);
 
         for (String[] word : shuffles) {
             crossword = new CrossWord();
@@ -61,7 +63,19 @@ public class Main {
 
     }
 
-    public static List<String[]> shuffling(String[] words, int variation) {
+    private static int factorial(int n) {
+        if (n == 1) {
+            return 1;
+        } else {
+            int res = n * factorial(n - 1);
+            return res < 1 ? -1 : res;
+        }
+    }
+
+    public static List<String[]> shuffling(String[] words, int maxVariations) {
+        int variation = factorial(words.length);
+        variation = variation < 1 || variation > maxVariations ? maxVariations : variation;
+
         List<String[]> res = new ArrayList<>();
         int count = 0;
         while (count < variation) {
@@ -86,7 +100,7 @@ public class Main {
     }
 
     public static void shuffle(String[] arr) {
-        Random r = null;
+        Random r;
         try {
             r = SecureRandom.getInstanceStrong();
         } catch (NoSuchAlgorithmException e) {
