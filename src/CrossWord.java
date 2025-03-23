@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Stack;
 
 public class CrossWord {
-    private static final int CROSSWORD_DIMENSION = 100;
+    private static final int CROSSWORD_DIMENSION = 300;
     private static final int SQUARE_DIMENSION = 40;
 
     private final Square[][] crossword;

@@ -26,28 +26,25 @@ public class Main {
 
         crossword.generate(words);
 
-        List<CrossWord> res = new ArrayList<>();
-        res.add(crossword);
+        CrossWord best = crossword;
+        double bestScore = best.getBoardScore();
 
         List<String[]> shuffles = shuffling(words, MAX_VARIATIONS);
 
         for (String[] word : shuffles) {
             crossword = new CrossWord();
             crossword.generate(word);
-            res.add(crossword);
-        }
-
-        double bestScore = -1;
-        for (CrossWord cw : res) {
-            double score = cw.getBoardScore();
-            if (cw.getWordsCounter() > crossword.getWordsCounter()) {
-                crossword = cw;
+            double score = crossword.getBoardScore();
+            if (crossword.getWordsCounter() > best.getWordsCounter()) {
+                best = crossword;
                 bestScore = score;
-            } else if (cw.getWordsCounter() == crossword.getWordsCounter() && score > bestScore) {
+            } else if (crossword.getWordsCounter() == best.getWordsCounter() && score > bestScore) {
+                best = crossword;
                 bestScore = score;
-                crossword = cw;
             }
         }
+
+        crossword = best;
 
 //        crossword.showSolution();
         crossword.createSolutionImage();
