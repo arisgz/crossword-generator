@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class Main {
 
-    private final static int MAX_VARIATIONS = 30000;
+    private final static int MAX_VARIATIONS = 3000;
     private final static String CONF_FILE = "words.conf";
 
     public static void main(String[] args) throws IOException {
